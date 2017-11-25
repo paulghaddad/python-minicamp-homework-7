@@ -39,14 +39,16 @@ def getPosts():
     connection.close()
     return jsonify(postsList)
 
-@app.route('/like/<post_id>')
-def likePost(post_id):
+@app.route('/like', methods = ['POST'])
+def likePost():
+    post_id = request.get_json()['postId']
     connection = sqlite3.connect('database.db')
     cursor = connection.cursor()
-
     cursor.execute('UPDATE posts SET likes=likes + 1 WHERE id=?', (post_id))
     connection.commit()
+    cursor.execute('SELECT likes FROM posts WHERE id = ?', (post_id))
+    current_like_count = cursor.fetchone()[0];
     connection.close()
-    return post_id + ' successfully updated'
+    return jsonify(likeCount=current_like_count)
 
 app.run(debug = True)
