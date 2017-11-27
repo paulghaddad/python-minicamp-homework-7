@@ -51,4 +51,14 @@ def likePost():
     connection.close()
     return jsonify(likeCount=current_like_count)
 
+@app.route('/delete', methods = ['POST'])
+def deletePost():
+    post_id = request.get_json()['postId']
+    connection = sqlite3.connect('database.db')
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM posts WHERE id=?', (post_id))
+    connection.commit()
+    connection.close()
+    return jsonify(deletedPost=post_id)
+
 app.run(debug = True)
